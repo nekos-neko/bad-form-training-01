@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フォーム改善ツール（講師用）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 660px;
+      padding: 40px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 22px;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    .round-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e8f0fe;
+      color: #1a73e8;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      color: #333;
+    }
+
+    textarea:focus { border-color: #1a73e8; }
+    textarea::placeholder { color: #bbb; }
+
+    .hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 6px;
+      margin-bottom: 24px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #1558b0;
+    }
+
+    .btn-submit:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      background: #93b9f5;
+      cursor: not-allowed;
+    }
+
+    /* ローディング */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 32px 0;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #e8f0fe;
+      border-top-color: #1a73e8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading p {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .loading .sub {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* 成功 */
+    .success-box {
+      display: none;
+      background: #f0faf2;
+      border: 1px solid #a5d6a7;
+      border-radius: 10px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .success-box h3 {
+      color: #2e7d32;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .success-box .note {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .success-links {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .link-btn {
+      display: inline-block;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .link-btn:hover { opacity: 0.85; }
+
+    .link-btn.primary {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .link-btn.secondary {
+      background: #f0f2f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-next {
+      padding: 10px 28px;
+      background: white;
+      color: #1a73e8;
+      border: 2px solid #1a73e8;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-next:hover { background: #e8f0fe; }
+
+    /* エラー */
+    .error-box {
+      display: none;
+      background: #fdecea;
+      border: 1px solid #f5c6c6;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      color: #c62828;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* 履歴 */
+    .history-section {
+      margin-top: 36px;
+      border-top: 1px solid #eee;
+      padding-top: 28px;
+    }
+
+    .history-section h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .history-item {
+      background: #f9fafb;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .history-item .round-num {
+      font-size: 11px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin-bottom: 6px;
+    }
+
+    .history-empty {
+      font-size: 13px;
+      color: #ccc;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .setup-warning {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #795548;
+      line-height: 1.6;
+    }
+
+    .setup-warning strong { color: #e65100; }
+    .setup-warning code {
+      background: #fff3e0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="page-header">
+      <h1>フォーム改善ツール</h1>
+      <p>講師用 ・ 社員から挙がった改善点を入力すると、フォームが自動で改善されます</p>
+    </div>
+
+    <div id="setup-warning" class="setup-warning" style="display:none">
+      <strong>セットアップが必要です：</strong><br>
+      このファイルの <code>WORKER_URL</code> をCloudflare WorkerのURLに変更してください。<br>
+      詳しくはセットアップ手順を参照してください。
+    </div>
+
+    <div id="form-area">
+      <div class="round-badge" id="round-label">
+        <span>第1回目の改善</span>
+      </div>
+
+      <label class="form-label" for="improvements">改善点</label>
+      <textarea
+        id="improvements"
+        placeholder="例：
+・エラーメッセージが分かりにくい（コード番号だけで内容が不明）
+・送信ボタンと戻るボタンのラベルが逆になっている
+・必須項目の表示方法が統一されていない
+・コントラストが低くて文字が読みにくい"></textarea>
+      <p class="hint">社員から挙がった改善点を箇条書きで入力してください。複数でも構いません。</p>
+
+      <button class="btn-submit" id="submit-btn" onclick="applyImprovements()">
+        改善を反映する
+      </button>
+      <div class="error-box" id="error-box"></div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>AIがフォームを改善しています...</p>
+      <p class="sub">30秒〜1分ほどかかります</p>
+    </div>
+
+    <div class="success-box" id="success-box">
+      <div class="success-icon">✅</div>
+      <h3>反映が完了しました！</h3>
+      <p class="note">
+        GitHub Pagesの更新に<strong>約1分</strong>かかります。<br>
+        しばらく待ってからフォームを確認してください。
+      </p>
+      <div class="success-links">
+        <a class="link-btn primary" href="https://nekos-neko.github.io/bad-form-training-01/" target="_blank">
+          改善後のフォームを確認 →
+        </a>
+        <a class="link-btn secondary" href="https://nekos-neko.github.io/bad-form-training-01/compare.html" target="_blank">
+          ビフォー・アフター比較 →
+        </a>
+      </div>
+      <button class="btn-next" onclick="nextRound()">次の改善を行う</button>
+    </div>
+
+    <div class="history-section">
+      <h3>改善履歴</h3>
+      <div id="history-list">
+        <p class="history-empty">まだ改善履歴はありません</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 設定（デプロイ後にここを変更） =====
+    const WORKER_URL = 'YOUR_WORKER_URL_HERE';
+    // ==========================================
+
+    const STORAGE_KEY = 'bad-form-training-history';
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHistory(improvements) {
+      const history = getHistory();
+      history.push({
+        round: history.length + 1,
+        improvements,
+        timestamp: new Date().toLocaleString('ja-JP')
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    }
+
+    function renderHistory() {
+      const history = getHistory();
+      const round = history.length + 1;
+      document.getElementById('round-label').querySelector('span').textContent = `第${round}回目の改善`;
+
+      const list = document.getElementById('history-list');
+      if (history.length === 0) {
+        list.innerHTML = '<p class="history-empty">まだ改善履歴はありません</p>';
+        return;
+      }
+
+      list.innerHTML = [...history].reverse().map(h => `
+        <div class="history-item">
+          <div class="round-num">第${h.round}回 ・ ${h.timestamp}</div>
+          <div>${h.improvements.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+        </div>
+      `).join('');
+    }
+
+    function showSetupWarning() {
+      if (WORKER_URL === 'YOUR_WORKER_URL_HERE') {
+        document.getElementById('setup-warning').style.display = 'block';
+      }
+    }
+
+    async function applyImprovements() {
+      const improvements = document.getElementById('improvements').value.trim();
+      const errorBox = document.getElementById('error-box');
+
+      errorBox.style.display = 'none';
+
+      if (!improvements) {
+        errorBox.textContent = '改善点を入力してください。';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      if (WORKER_URL === 'YOUR_WORKER_URL_HERE') {
+        errorBox.innerHTML = 'WORKER_URLが設定されていません。<br>このファイルの <code style="background:#fde;padding:1px 4px;border-radius:3px">WORKER_URL</code> をCloudflare WorkerのURLに変更してください。';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ improvements })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || `サーバーエラー (${res.status})`);
+        }
+
+        saveHistory(improvements);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('success-box').style.display = 'block';
+        renderHistory();
+
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('form-area').style.display = 'block';
+        errorBox.textContent = `エラーが発生しました: ${err.message}`;
+        errorBox.style.display = 'block';
+      }
+    }
+
+    function nextRound() {
+      document.getElementById('success-box').style.display = 'none';
+      document.getElementById('improvements').value = '';
+      document.getElementById('form-area').style.display = 'block';
+    }
+
+    showSetupWarning();
+    renderHistory();
+  </script>
+</body>
+</html>
