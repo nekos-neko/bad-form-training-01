@@ -6,8 +6,8 @@
   <style>
     /* 低コントラスト・読みにくい背景色 */
     body {
-      background-color: #d8d4c8;
-      color: #b0a898;
+      background-color: #f0ede6;
+      color: #2c2a27;
       font-family: Arial;
       font-size: 12px;
       margin: 0;
@@ -16,23 +16,23 @@
 
     /* タイトルが目立たない */
     h1 {
-      color: #c2bdb4;
+      color: #1a1814;
       font-size: 14px;
       font-weight: normal;
       margin-bottom: 4px;
     }
 
     .subtitle {
-      color: #ccc8c0;
+      color: #3a3830;
       font-size: 10px;
       margin-bottom: 30px;
     }
 
     .form-container {
-      background-color: #dedad2;
+      background-color: #ffffff;
       padding: 24px;
       max-width: 560px;
-      border: 1px solid #ccc8c0;
+      border: 1px solid #6b6760;
     }
 
     /* フィールドグループ：間隔がバラバラ */
@@ -51,7 +51,7 @@
     /* ラベル：色が薄くて読みにくい */
     label {
       display: block;
-      color: #bcb7af;
+      color: #1a1814;
       font-size: 11px;
       margin-bottom: 1px;
     }
@@ -59,7 +59,7 @@
     /* ラベルなしで説明だけのケース */
     .no-label-hint {
       font-size: 9px;
-      color: #ccc8c0;
+      color: #3a3830;
       display: block;
       margin-bottom: 1px;
     }
@@ -74,9 +74,9 @@
       width: 100%;
       box-sizing: border-box;
       padding: 4px;
-      background-color: #dad6ce;
-      border: 1px solid #c8c4bc;
-      color: #a8a09a;
+      background-color: #ffffff;
+      border: 1px solid #5a5750;
+      color: #1a1814;
       font-size: 11px;
       outline: none;
     }
@@ -84,17 +84,17 @@
     /* プレースホルダーがラベル代わり（消えると忘れる） */
     input::placeholder,
     textarea::placeholder {
-      color: #c0bbb4;
+      color: #6b6760;
     }
 
     /* 必須マークが統一されていない */
-    .req-star { color: #c8b89a; font-size: 10px; }
-    .req-text { color: #b8b0a8; font-size: 9px; }
+    .req-star { color: #7a3a00; font-size: 10px; }
+    .req-text { color: #3a3830; font-size: 9px; }
     .req-none { /* 本当は必須だが何も表示しない */ }
 
     /* エラーメッセージ：赤だが背景に溶け込む */
     .error-msg {
-      color: #b89090;
+      color: #9b1c1c;
       font-size: 9px;
       display: none;
       margin-top: 1px;
@@ -106,14 +106,14 @@
 
     /* セクション区切りがわかりにくい */
     .section {
-      border-top: 1px dotted #ccc8c0;
+      border-top: 1px dotted #6b6760;
       padding-top: 8px;
       margin-top: 8px;
     }
 
     .section-title {
       font-size: 10px;
-      color: #c0bbb4;
+      color: #1a1814;
       margin-bottom: 6px;
     }
 
@@ -127,9 +127,9 @@
 
     /* 送信ボタンが目立たない */
     .btn-submit {
-      background-color: #ccc8c0;
-      color: #b8b4ac;
-      border: 1px solid #bcb8b0;
+      background-color: #6b6760;
+      color: #ffffff;
+      border: 1px solid #3a3830;
       padding: 5px 12px;
       font-size: 11px;
       cursor: pointer;
@@ -148,9 +148,9 @@
 
     /* リセットボタンが紛らわしい位置に */
     .btn-reset {
-      background-color: #ccc8c0;
-      color: #b0a898;
-      border: 1px solid #bcb8b0;
+      background-color: #e8e4dc;
+      color: #1a1814;
+      border: 1px solid #6b6760;
       padding: 5px 10px;
       font-size: 11px;
       cursor: pointer;
@@ -160,7 +160,7 @@
     /* 注意書きが読めないほど小さい */
     .fine-print {
       font-size: 8px;
-      color: #ccc8c0;
+      color: #3a3830;
       margin-top: 12px;
       line-height: 1.3;
     }
@@ -180,7 +180,7 @@
 
     .checkbox-label {
       font-size: 10px;
-      color: #bcb7af;
+      color: #1a1814;
       max-width: 400px;
     }
 
@@ -196,7 +196,7 @@
       align-items: center;
       gap: 2px;
       font-size: 10px;
-      color: #bcb7af;
+      color: #1a1814;
     }
 
     .radio-item input {
@@ -206,7 +206,7 @@
     /* プログレスバー：見た目だけで動かない */
     .progress-bar {
       height: 4px;
-      background-color: #ccc8c0;
+      background-color: #c8c4bc;
       margin-bottom: 20px;
       position: relative;
     }
@@ -218,12 +218,12 @@
       top: 0;
       height: 100%;
       width: 33%;
-      background-color: #b8b4ac;
+      background-color: #3a3830;
     }
 
     .progress-label {
       font-size: 9px;
-      color: #ccc8c0;
+      color: #3a3830;
       text-align: right;
       margin-bottom: 2px;
     }
@@ -236,9 +236,9 @@
 
     .tooltip-icon {
       cursor: pointer;
-      color: #c0bbb4;
+      color: #1a1814;
       font-size: 9px;
-      border: 1px solid #c8c4bc;
+      border: 1px solid #5a5750;
       padding: 0 2px;
       user-select: none;
     }
@@ -250,15 +250,15 @@
     .tooltip-box {
       display: none;
       position: absolute;
-      background: #ccc8c0;
-      color: #c0bbb4;
+      background: #2c2a27;
+      color: #ffffff;
       font-size: 9px;
       padding: 4px;
       width: 160px;
       top: -2px;
       left: 18px;
       z-index: 10;
-      border: 1px solid #bcb8b0;
+      border: 1px solid #1a1814;
     }
 
     /* 入力欄の幅がランダム */
@@ -274,14 +274,14 @@
     }
 
     .inline-sep {
-      color: #c0bbb4;
+      color: #1a1814;
       font-size: 10px;
     }
 
     /* 全体エラー：目立たない場所に小さく */
     .global-error {
       font-size: 9px;
-      color: #b89090;
+      color: #9b1c1c;
       margin-bottom: 8px;
       display: none;
     }
@@ -293,7 +293,7 @@
     /* 送信完了メッセージ */
     #success-msg {
       display: none;
-      color: #a8b898;
+      color: #1a4a1a;
       font-size: 11px;
       margin-top: 12px;
     }
@@ -307,11 +307,11 @@
     .blink {
       animation: blink 1.2s infinite;
       font-size: 9px;
-      color: #b89090;
+      color: #9b1c1c;
     }
 
     /* 選択肢が多すぎるセレクト */
-    select option { background: #dad6ce; color: #a8a09a; }
+    select option { background: #ffffff; color: #1a1814; }
 
     /* 余白が詰まりすぎているセクション */
     .dense-section .field { margin-bottom: 1px; }
@@ -327,8 +327,8 @@
     .step-badge {
       display: inline-block;
       font-size: 8px;
-      color: #c0bbb4;
-      border: 1px solid #c8c4bc;
+      color: #1a1814;
+      border: 1px solid #5a5750;
       padding: 0 3px;
       margin-right: 4px;
     }
@@ -500,7 +500,7 @@
       <!-- 備考：文字数制限が書いていない -->
       <div class="field">
         <label>備考・ご要望など <span class="req-star">※</span></label>
-        <textarea id="remarks" rows="3" placeholder="ご自由にどうぞ" style="width:100%;box-sizing:border-box;background:#dad6ce;border:1px solid #c8c4bc;color:#a8a09a;font-size:11px;" autocomplete="off"></textarea>
+        <textarea id="remarks" rows="3" placeholder="ご自由にどうぞ" style="width:100%;box-sizing:border-box;background:#ffffff;border:1px solid #5a5750;color:#1a1814;font-size:11px;" autocomplete="off"></textarea>
         <span class="error-msg" id="e-remarks">入力に問題があります</span>
       </div>
     </div>
@@ -690,15 +690,3 @@
 
     // グローバルエラーを途中に表示（上ではなく中間）
     var ge = document.getElementById('global-error');
-    if (hasError) {
-      ge.classList.add('visible');
-      // ページトップへは飛ばさない
-    } else {
-      ge.classList.remove('visible');
-      // 送信完了メッセージが不安を煽る
-      document.getElementById('success-msg').style.display = 'block';
-    }
-  }
-</script>
-</body>
-</html>
