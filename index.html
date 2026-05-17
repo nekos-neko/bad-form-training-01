@@ -361,13 +361,13 @@
       <span class="error-msg" id="e-f1">未入力です</span>
     </div>
 
-    <!-- 姓名が逆順で並んでいる -->
+    <!-- 姓名の順に修正 -->
     <div class="field field-wide">
-      <label>氏名（名・姓の順）<span class="req-star">＊</span></label>
+      <label>氏名（姓・名の順）<span class="req-star">＊</span></label>
       <div class="inline-fields">
-        <input type="text" id="fname" placeholder="例）太郎" class="input-md" autocomplete="off">
-        <span class="inline-sep">　</span>
         <input type="text" id="lname" placeholder="例）山田" class="input-md" autocomplete="off">
+        <span class="inline-sep">　</span>
+        <input type="text" id="fname" placeholder="例）太郎" class="input-md" autocomplete="off">
       </div>
       <span class="error-msg" id="e-name">正しく入力してください（エラーコード：NAME_INVALID）</span>
     </div>
@@ -690,3 +690,4 @@
 
     // グローバルエラーを途中に表示（上ではなく中間）
     var ge = document.getElementById('global-error');
+    if (hasError
