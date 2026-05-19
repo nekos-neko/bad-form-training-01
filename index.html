@@ -480,13 +480,13 @@
         <span class="error-msg" id="e-qty">数値が不正です（エラーコード：QTY_ERR_002）</span>
       </div>
 
-      <!-- 希望日：形式説明なし -->
+      <!-- 希望日：カレンダーから選択 -->
       <div class="field field-wide">
         <label>
           希望日
           <span class="blink">（※営業日のみ）</span>
         </label>
-        <input type="text" id="desired-date" placeholder="ご希望の日付" class="input-lg" autocomplete="off">
+        <input type="date" id="desired-date" class="input-lg" autocomplete="off">
         <span class="error-msg" id="e-date">日付が正しくありません</span>
       </div>
 
@@ -658,8 +658,8 @@
     showError('e-qty', qtyErr);
     if (qtyErr) hasError = true;
 
-    // 希望日：何の形式でもないランダムバリデーション
-    var dd = document.getElementById('desired-date').value.trim();
+    // 希望日：カレンダー入力
+    var dd = document.getElementById('desired-date').value;
     showError('e-date', dd === '');
     if (dd === '') hasError = true;
 
@@ -690,6 +690,4 @@
   }
 </script>
 <div style="position:fixed;bottom:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;padding:4px 10px;font-size:11px;font-family:monospace;border-radius:4px;z-index:9999;">最終更新: 2026/5/17 16:47:18</div>
-<div style="position:fixed;bottom:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;padding:4px 10px;font-size:11px;font-family:monospace;border-radius:4px;z-index:9999;">最終更新: 2026/5/19 6:33:18</div>
-</body>
-</html>
+<div style="position:fixed;bottom:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;padding:4px 10px;font-size:11px;font-family:monospace;border-radius:4px;z-index:9999;">最終更新: 2026/5/19 6:33:18</div<div style="position:fixed;bottom:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;padding:4px 10px;font-size:11px;font-family:monospace;border-radius:4px;z-index:9999;">最終更新: 2026/5/19 12:17:49</div>
