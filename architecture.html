@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>システム構成図 - UIハンズオン BADパターン改善</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #f0f2f5;
+      padding: 32px 24px 60px;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 18px;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 36px;
+    }
+
+    /* ===== レイアウト ===== */
+    .diagram {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 0;
+      position: relative;
+    }
+
+    /* ===== ノード共通 ===== */
+    .node {
+      border-radius: 10px;
+      padding: 16px 14px;
+      margin: 8px;
+      position: relative;
+    }
+    .node-title {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .node-icon { font-size: 18px; line-height: 1; }
+    .file-list {
+      list-style: none;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+    .file-list li {
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    .file-list li.highlight {
+      font-weight: bold;
+    }
+    .role-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+    .note {
+      font-size: 10px;
+      color: #888;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ===== ノード別カラー ===== */
+    .node-local {
+      background: #fff8e1;
+      border: 2px solid #f9a825;
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .node-local .node-title { color: #e65100; }
+    .node-local .file-list li { background: #fff3cd; }
+
+    .node-github {
+      background: #f3e5f5;
+      border: 2px solid #8e24aa;
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .node-github .node-title { color: #6a1b9a; }
+    .node-github .file-list li { background: #ede7f6; }
+
+    .node-cloudflare {
+      background: #fff3e0;
+      border: 2px solid #ef6c00;
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .node-cloudflare .node-title { color: #bf360c; }
+    .node-cloudflare .file-list li { background: #fbe9e7; }
+
+    .node-claude {
+      background: #e8f5e9;
+      border: 2px solid #2e7d32;
+      grid-column: 4;
+      grid-row: 1;
+    }
+    .node-claude .node-title { color: #1b5e20; }
+    .node-claude .file-list li { background: #dcedc8; }
+
+    .node-trainer {
+      background: #e3f2fd;
+      border: 2px solid #1565c0;
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .node-trainer .node-title { color: #0d47a1; }
+
+    .node-user {
+      background: #fce4ec;
+      border: 2px solid #c62828;
+      grid-column: 2 / 5;
+      grid-row: 3;
+    }
+    .node-user .node-title { color: #b71c1c; }
+
+    /* ===== フロー説明 ===== */
+    .flows {
+      max-width: 1000px;
+      margin: 32px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .flow-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 4px solid #1a73e8;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .flow-card h3 {
+      font-size: 13px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin-bottom: 10px;
+    }
+    .flow-steps {
+      list-style: none;
+      counter-reset: step;
+    }
+    .flow-steps li {
+      counter-increment: step;
+      font-size: 12px;
+      color: #444;
+      padding: 4px 0 4px 24px;
+      position: relative;
+      line-height: 1.5;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .flow-steps li:last-child { border-bottom: none; }
+    .flow-steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 18px;
+      height: 18px;
+      background: #1a73e8;
+      color: white;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: bold;
+      font-family: monospace;
+    }
+    .tag-github { background: #ede7f6; color: #6a1b9a; }
+    .tag-cf     { background: #fbe9e7; color: #bf360c; }
+    .tag-claude { background: #dcedc8; color: #1b5e20; }
+    .tag-kv     { background: #fff3e0; color: #e65100; }
+
+    /* ===== 凡例（矢印の説明） ===== */
+    .legend {
+      max-width: 1000px;
+      margin: 24px auto 0;
+      background: white;
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .legend h3 { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 12px; }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .legend-item {
+      font-size: 11px;
+      color: #555;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ===== SVG矢印オーバーレイ ===== */
+    .arrow-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* ===== ファイル構成 ===== */
+    .files-section {
+      max-width: 1000px;
+      margin: 24px auto 0;
+      background: white;
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .files-section h3 { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 12px; }
+    .file-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .file-table th {
+      background: #f5f5f5;
+      padding: 7px 10px;
+      text-align: left;
+      border: 1px solid #e0e0e0;
+      color: #555;
+      font-weight: 600;
+    }
+    .file-table td {
+      padding: 7px 10px;
+      border: 1px solid #e0e0e0;
+      color: #444;
+      vertical-align: top;
+    }
+    .file-table tr:nth-child(even) td { background: #fafafa; }
+    code {
+      font-family: monospace;
+      background: #f0f0f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>システム構成図</h1>
+<p class="subtitle">UIハンズオン（BADパターン改善）— ローカル / GitHub / Cloudflare / Claude API / 利用者</p>
+
+<!-- ===== ノード図 ===== -->
+<div class="diagram">
+
+  <!-- 講師PC（ブラウザ） -->
+  <div class="node node-trainer">
+    <div class="node-title"><span class="node-icon">🧑‍💻</span>講師（ブラウザ）</div>
+    <ul class="file-list">
+      <li class="highlight">admin/index.html</li>
+    </ul>
+    <p class="note">セッション作成・改善点入力<br>参加者へURLを共有</p>
+  </div>
+
+  <!-- GitHub Pages -->
+  <div class="node node-github">
+    <div class="node-title"><span class="node-icon">🐙</span>GitHub Pages</div>
+    <ul class="file-list">
+      <li class="highlight">admin/index.html</li>
+      <li class="highlight">view.html</li>
+      <li class="highlight">compare.html</li>
+      <li>original.html</li>
+      <li>GoodExample.html</li>
+    </ul>
+    <p class="note">静的ファイルホスティング<br>nekos-neko.github.io/…</p>
+  </div>
+
+  <!-- Cloudflare Workers + KV -->
+  <div class="node node-cloudflare">
+    <div class="node-title"><span class="node-icon">⚙️</span>Cloudflare Workers</div>
+    <ul class="file-list">
+      <li class="highlight">worker.js</li>
+      <li style="margin-top:6px;background:#ffe0b2;">📦 KV: session:{id}:html</li>
+      <li style="background:#ffe0b2;">📦 KV: session:{id}:meta</li>
+      <li style="background:#ffe0b2;">📦 KV: session:{id}:history</li>
+      <li style="background:#ffe0b2;">📦 KV: sessions（一覧）</li>
+    </ul>
+    <p class="note">APIエンドポイント提供<br>セッションデータ永続化</p>
+  </div>
+
+  <!-- Claude API -->
+  <div class="node node-claude">
+    <div class="node-title"><span class="node-icon">🤖</span>Claude API</div>
+    <ul class="file-list">
+      <li>claude-sonnet-4-6</li>
+    </ul>
+    <p class="note">改善点＋現在のHTMLを受け取り<br>改善済みHTMLを返す<br><br>🔑 ANTHROPIC_API_KEY</p>
+  </div>
+
+  <!-- ローカルPC -->
+  <div class="node node-local">
+    <div class="node-title"><span class="node-icon">💻</span>ローカルPC（開発）</div>
+    <ul class="file-list">
+      <li>github-pages/</li>
+      <li class="highlight" style="margin-left:8px;">original.html</li>
+      <li class="highlight" style="margin-left:8px;">GoodExample.html</li>
+      <li class="highlight" style="margin-left:8px;">admin/index.html</li>
+      <li class="highlight" style="margin-left:8px;">view.html</li>
+      <li class="highlight" style="margin-left:8px;">compare.html</li>
+      <li style="margin-top:4px;">cloudflare-worker/</li>
+      <li class="highlight" style="margin-left:8px;">worker.js</li>
+      <li class="highlight" style="margin-left:8px;">wrangler.toml</li>
+    </ul>
+    <p class="note">git push → GitHub へ反映<br>Cloudflare dashboard でデプロイ</p>
+  </div>
+
+  <!-- 参加者 -->
+  <div class="node node-user">
+    <div class="node-title"><span class="node-icon">👥</span>参加者（ブラウザ）</div>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px;font-weight:bold;color:#c62828;margin-bottom:4px;">現状確認</div>
+        <code>view.html?s={sessionId}</code>
+        <p class="note" style="margin-top:4px;">Workerから取得したHTMLを<br>iframeで表示</p>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:bold;color:#c62828;margin-bottom:4px;">ビフォー・アフター比較</div>
+        <code>compare.html?s={sessionId}</code>
+        <p class="note" style="margin-top:4px;">左：original.html（静的）<br>右：Workerから取得した改善版</p>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:bold;color:#c62828;margin-bottom:4px;">改善例（答え合わせ）</div>
+        <code>GoodExample.html</code>
+        <p class="note" style="margin-top:4px;">研修終了後に公開<br>URLを直接共有</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== フロー説明 ===== -->
+<div class="flows">
+
+  <div class="flow-card">
+    <h3>🔵 セッション作成フロー（研修開始時）</h3>
+    <ol class="flow-steps">
+      <li>講師が <span class="tag tag-github">admin/index.html</span> を開く</li>
+      <li>自動で <span class="tag tag-cf">Worker</span> に POST /session/new を送信</li>
+      <li>WorkerがGitHub APIから <code>original.html</code> を取得</li>
+      <li><span class="tag tag-kv">KV</span> にセッションID・HTMLを保存</li>
+      <li>管理画面にセッションID・参加者URLが表示される</li>
+      <li>講師が参加者に <code>view.html?s=xxxx</code> のURLを共有</li>
+    </ol>
+  </div>
+
+  <div class="flow-card">
+    <h3>🟢 改善反映フロー（ディスカッション後）</h3>
+    <ol class="flow-steps">
+      <li>講師が改善点をテキストで入力・送信</li>
+      <li><span class="tag tag-cf">Worker</span> が <span class="tag tag-kv">KV</span> から現在のHTMLを取得</li>
+      <li>改善点＋HTMLを <span class="tag tag-claude">Claude API</span> に送信</li>
+      <li>Claudeが改善済みHTMLを返す（30秒〜1分）</li>
+      <li>改善済みHTMLを <span class="tag tag-kv">KV</span> に上書き保存</li>
+      <li>参加者が <code>view.html</code> を更新すると改善後が表示される</li>
+    </ol>
+  </div>
+
+  <div class="flow-card">
+    <h3>🔴 参加者の閲覧フロー</h3>
+    <ol class="flow-steps">
+      <li>URLの <code>?s=xxxx</code> からセッションIDを取得</li>
+      <li><span class="tag tag-cf">Worker</span> に GET /session/{id} を送信</li>
+      <li>WorkerがKVからHTMLを返す</li>
+      <li>Blob URLを生成しiframeに表示</li>
+      <li>🔄更新ボタンで最新の改善版を取得できる</li>
+    </ol>
+  </div>
+
+  <div class="flow-card">
+    <h3>🟠 開発・デプロイフロー</h3>
+    <ol class="flow-steps">
+      <li>ローカルでHTMLファイルを編集</li>
+      <li><code>git push</code> で <span class="tag tag-github">GitHub</span> に反映</li>
+      <li>GitHub Pagesが自動でファイルを公開（1〜2分）</li>
+      <li><code>worker.js</code> はCloudflareダッシュボードで編集・デプロイ</li>
+      <li>シークレット（APIキー等）はCloudflare Settingsで管理</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ===== ファイル構成表 ===== -->
+<div class="files-section">
+  <h3>📄 ソースファイル一覧</h3>
+  <table class="file-table">
+    <thead>
+      <tr>
+        <th>ファイル</th>
+        <th>ホスト場所</th>
+        <th>役割</th>
+        <th>主な利用者</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>original.html</code></td>
+        <td>GitHub Pages</td>
+        <td>BADパターンを含む研修用フォーム（元データ）。セッション作成時にWorkerがGitHub APIで読み込みKVに格納する</td>
+        <td>システム（自動取得）</td>
+      </tr>
+      <tr>
+        <td><code>GoodExample.html</code></td>
+        <td>GitHub Pages</td>
+        <td>全改善点を適用した「答え合わせ」用フォーム。研修終了後に参加者へURLを直接共有する</td>
+        <td>参加者</td>
+      </tr>
+      <tr>
+        <td><code>admin/index.html</code></td>
+        <td>GitHub Pages</td>
+        <td>講師用管理画面。セッション作成・改善点入力・履歴確認・参加者URL共有を行う</td>
+        <td>講師</td>
+      </tr>
+      <tr>
+        <td><code>view.html</code></td>
+        <td>GitHub Pages</td>
+        <td>参加者用の現状確認画面。URLパラメータのセッションIDでWorkerからHTMLを取得しiframe表示する</td>
+        <td>参加者</td>
+      </tr>
+      <tr>
+        <td><code>compare.html</code></td>
+        <td>GitHub Pages</td>
+        <td>ビフォー・アフター比較画面。左にoriginal.html、右にWorkerから取得した改善版を並べて表示する</td>
+        <td>参加者・講師</td>
+      </tr>
+      <tr>
+        <td><code>worker.js</code></td>
+        <td>Cloudflare Workers</td>
+        <td>APIエンドポイントを提供するサーバーレス関数。セッション管理・Claude API呼び出し・KV読み書きを担う</td>
+        <td>システム（自動）</td>
+      </tr>
+      <tr>
+        <td><code>wrangler.toml</code></td>
+        <td>ローカルPC（設定）</td>
+        <td>Cloudflare Workersのデプロイ設定ファイル。KVバインディング名・ワーカー名などを定義する</td>
+        <td>開発者</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== 凡例 ===== -->
+<div class="legend">
+  <h3>🔑 シークレット・環境変数</h3>
+  <div class="legend-grid">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#2e7d32;"></div>
+      <div><strong>ANTHROPIC_API_KEY</strong><br>Claude API認証キー。Cloudflare WorkersのSecretsに設定</div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#6a1b9a;"></div>
+      <div><strong>GITHUB_TOKEN</strong><br>GitHub APIでoriginal.htmlを読み取るためのPAT。Cloudflare Secretsに設定</div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#ef6c00;"></div>
+      <div><strong>SESSION_STORE（KV）</strong><br>Cloudflare KV Namespace。セッションごとのHTML・メタ・履歴を保存</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
