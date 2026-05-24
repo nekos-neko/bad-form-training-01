@@ -499,10 +499,17 @@
       <p class="hint">7桁の数字を入力すると住所を自動補完します</p>
     </div>
 
-    <!-- 住所 -->
+    <!-- 住所１（郵便番号自動補完） -->
     <div class="field">
-      <label>住所</label>
-      <input type="text" id="address" placeholder="都道府県・市区町村・番地">
+      <label>住所１</label>
+      <input type="text" id="address" placeholder="都道府県・市区町村">
+      <p class="hint">郵便番号入力で自動補完されます</p>
+    </div>
+
+    <!-- 住所２ -->
+    <div class="field">
+      <label>住所２（番地・建物名）</label>
+      <input type="text" id="address2" placeholder="例：1-2-3 ○○マンション101号室">
     </div>
 
     <div class="button-area">
@@ -921,6 +928,7 @@
     var email = document.getElementById('email').value;
     var zip = document.getElementById('zip').value;
     var address = document.getElementById('address').value;
+    var address2 = document.getElementById('address2').value;
 
     var contactTimes = [];
     var labels = { morning: '9:00〜12:00', afternoon: '13:00〜17:00', evening: '19:00〜21:00' };
@@ -963,7 +971,8 @@
         row('連絡可能な時間帯', contactTimes.join('、')) +
         row('メールアドレス', email) +
         row('郵便番号', zip || '未入力') +
-        row('住所', address || '未入力') +
+        row('住所１', address || '未入力') +
+        row('住所２（番地・建物名）', address2 || '未入力') +
       '</table>' +
       '<p class="confirm-section-title">■ 申込内容</p>' +
       '<table class="confirm-table">' +
