@@ -14,7 +14,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 60px;
+      padding: 32px 16px 60px;
     }
 
     .card {
@@ -22,26 +22,95 @@
       border-radius: 12px;
       box-shadow: 0 2px 16px rgba(0,0,0,0.08);
       width: 100%;
-      max-width: 660px;
-      padding: 40px;
+      max-width: 680px;
+      padding: 36px 40px;
     }
 
-    .page-header {
-      margin-bottom: 32px;
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 22px; color: #1a1a2e; margin-bottom: 6px; }
+    .page-header p  { font-size: 13px; color: #777; line-height: 1.5; }
+
+    /* セッション情報バー */
+    .session-bar {
+      background: #f0f5ff;
+      border: 1px solid #c5d8ff;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .session-bar .session-id {
+      font-size: 13px;
+      font-weight: bold;
+      color: #1a73e8;
+      font-family: monospace;
+    }
+    .session-bar .session-meta {
+      font-size: 12px;
+      color: #666;
+    }
+    .session-bar .session-loading {
+      font-size: 12px;
+      color: #999;
     }
 
-    .page-header h1 {
-      font-size: 22px;
-      color: #1a1a2e;
+    /* 参加者URL */
+    .url-box {
+      background: #f9fafb;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .url-box .url-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .url-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 6px;
     }
-
-    .page-header p {
-      font-size: 13px;
-      color: #777;
-      line-height: 1.5;
+    .url-row span {
+      font-size: 12px;
+      color: #1a73e8;
+      font-family: monospace;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px 8px;
     }
+    .url-row .url-type {
+      font-size: 11px;
+      color: #999;
+      width: 44px;
+      flex-shrink: 0;
+    }
+    .btn-copy {
+      font-size: 12px;
+      padding: 5px 10px;
+      background: #e8f0fe;
+      color: #1a73e8;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-copy:hover { background: #d0e4fd; }
 
+    /* ラウンドバッジ */
     .round-badge {
       display: inline-flex;
       align-items: center;
@@ -65,7 +134,7 @@
 
     textarea {
       width: 100%;
-      height: 200px;
+      height: 180px;
       padding: 14px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
@@ -77,16 +146,10 @@
       transition: border-color 0.2s;
       color: #333;
     }
-
     textarea:focus { border-color: #1a73e8; }
     textarea::placeholder { color: #bbb; }
 
-    .hint {
-      font-size: 12px;
-      color: #999;
-      margin-top: 6px;
-      margin-bottom: 24px;
-    }
+    .hint { font-size: 12px; color: #999; margin-top: 6px; margin-bottom: 20px; }
 
     .btn-submit {
       width: 100%;
@@ -98,53 +161,25 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s;
       letter-spacing: 0.02em;
     }
-
-    .btn-submit:hover:not(:disabled) {
-      background: #1558b0;
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .btn-submit:disabled {
-      background: #93b9f5;
-      cursor: not-allowed;
-    }
+    .btn-submit:hover:not(:disabled) { background: #1558b0; }
+    .btn-submit:disabled { background: #93b9f5; cursor: not-allowed; }
 
     /* ローディング */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 32px 0;
-    }
-
+    .loading { display: none; text-align: center; padding: 32px 0; }
     .spinner {
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       border: 4px solid #e8f0fe;
       border-top-color: #1a73e8;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin: 0 auto 16px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading p {
-      color: #555;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .loading .sub {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-    }
+    .loading p { color: #555; font-size: 14px; line-height: 1.6; }
+    .loading .sub { font-size: 12px; color: #999; margin-top: 4px; }
 
     /* 成功 */
     .success-box {
@@ -155,34 +190,10 @@
       padding: 28px 24px;
       text-align: center;
     }
-
-    .success-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-      line-height: 1;
-    }
-
-    .success-box h3 {
-      color: #2e7d32;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .success-box .note {
-      color: #666;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
-
-    .success-links {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
+    .success-icon { font-size: 40px; margin-bottom: 12px; line-height: 1; }
+    .success-box h3 { color: #2e7d32; font-size: 18px; margin-bottom: 8px; }
+    .success-box .note { color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+    .success-links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
     .link-btn {
       display: inline-block;
       padding: 9px 18px;
@@ -192,20 +203,9 @@
       text-decoration: none;
       transition: opacity 0.2s;
     }
-
     .link-btn:hover { opacity: 0.85; }
-
-    .link-btn.primary {
-      background: #1a73e8;
-      color: white;
-    }
-
-    .link-btn.secondary {
-      background: #f0f2f5;
-      color: #333;
-      border: 1px solid #ddd;
-    }
-
+    .link-btn.primary   { background: #1a73e8; color: white; }
+    .link-btn.secondary { background: #f0f2f5; color: #333; border: 1px solid #ddd; }
     .btn-next {
       padding: 10px 28px;
       background: white;
@@ -217,7 +217,6 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-
     .btn-next:hover { background: #e8f0fe; }
 
     /* エラー */
@@ -233,99 +232,125 @@
       line-height: 1.5;
     }
 
-    /* 履歴 */
-    .history-section {
-      margin-top: 36px;
-      border-top: 1px solid #eee;
-      padding-top: 28px;
-    }
-
+    /* 改善履歴 */
+    .history-section { margin-top: 32px; border-top: 1px solid #eee; padding-top: 24px; }
     .history-section h3 {
       font-size: 12px;
       font-weight: 600;
       color: #aaa;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-
     .history-item {
       background: #f9fafb;
       border: 1px solid #eee;
       border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
       font-size: 13px;
       color: #555;
       line-height: 1.6;
     }
+    .history-item .round-num { font-size: 11px; font-weight: bold; color: #1a73e8; margin-bottom: 4px; }
+    .history-empty { font-size: 13px; color: #ccc; text-align: center; padding: 16px; }
 
-    .history-item .round-num {
-      font-size: 11px;
+    /* セッション管理 */
+    .mgmt-section { margin-top: 32px; border-top: 1px solid #eee; padding-top: 24px; }
+    .mgmt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .mgmt-header h3 { font-size: 14px; font-weight: bold; color: #333; }
+    .btn-new-session {
+      padding: 8px 16px;
+      background: white;
+      color: #e65100;
+      border: 1px solid #e65100;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: bold;
-      color: #1a73e8;
-      margin-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+    .btn-new-session:hover { background: #fff3e0; }
 
-    .history-empty {
-      font-size: 13px;
-      color: #ccc;
-      text-align: center;
-      padding: 16px;
-    }
-
-    .setup-warning {
-      background: #fff8e1;
-      border: 1px solid #ffe082;
+    .session-item {
+      background: #f9fafb;
+      border: 1px solid #eee;
       border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 24px;
-      font-size: 13px;
-      color: #795548;
-      line-height: 1.6;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-
-    .setup-warning strong { color: #e65100; }
-    .setup-warning code {
-      background: #fff3e0;
-      padding: 1px 5px;
-      border-radius: 3px;
-      font-family: monospace;
+    .session-item .s-id   { font-family: monospace; font-size: 13px; font-weight: bold; color: #1a73e8; }
+    .session-item .s-meta { font-size: 12px; color: #888; flex: 1; }
+    .session-item .s-current {
+      font-size: 11px;
+      background: #e8f0fe;
+      color: #1a73e8;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    .btn-delete {
+      padding: 5px 12px;
+      background: white;
+      color: #c62828;
+      border: 1px solid #f5c6c6;
+      border-radius: 4px;
       font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
     }
+    .btn-delete:hover { background: #fdecea; }
+
+    .sessions-empty { font-size: 13px; color: #ccc; text-align: center; padding: 16px; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="page-header">
       <h1>フォーム改善ツール</h1>
-      <p>講師用 ・ 社員から挙がった改善点を入力すると、フォームが自動で改善されます</p>
+      <p>講師用 ・ 改善点を入力するとフォームが自動で改善されます</p>
     </div>
 
-    <div id="setup-warning" class="setup-warning" style="display:none">
-      <strong>セットアップが必要です：</strong><br>
-      このファイルの <code>WORKER_URL</code> をCloudflare WorkerのURLに変更してください。<br>
-      詳しくはセットアップ手順を参照してください。
+    <!-- セッション情報バー -->
+    <div class="session-bar" id="session-bar">
+      <span class="session-loading">セッションを準備中...</span>
     </div>
 
-    <div id="form-area">
-      <div class="round-badge" id="round-label">
-        <span>第1回目の改善</span>
+    <!-- 参加者URL -->
+    <div class="url-box" id="url-box" style="display:none">
+      <div class="url-label">参加者・比較ページURL</div>
+      <div class="url-row">
+        <span class="url-type">表示</span>
+        <span id="view-url"></span>
+        <button class="btn-copy" onclick="copyUrl('view-url')">コピー</button>
       </div>
+      <div class="url-row">
+        <span class="url-type">比較</span>
+        <span id="compare-url"></span>
+        <button class="btn-copy" onclick="copyUrl('compare-url')">コピー</button>
+      </div>
+    </div>
 
+    <!-- 改善フォーム -->
+    <div id="form-area">
+      <div class="round-badge" id="round-label"><span>第1回目の改善</span></div>
       <label class="form-label" for="improvements">改善点</label>
-      <textarea
-        id="improvements"
-        placeholder="例：
+      <textarea id="improvements" placeholder="例：
 ・エラーメッセージが分かりにくい（コード番号だけで内容が不明）
 ・送信ボタンと戻るボタンのラベルが逆になっている
-・必須項目の表示方法が統一されていない
-・コントラストが低くて文字が読みにくい"></textarea>
+・必須項目の表示方法が統一されていない"></textarea>
       <p class="hint">社員から挙がった改善点を箇条書きで入力してください。複数でも構いません。</p>
-
-      <button class="btn-submit" id="submit-btn" onclick="applyImprovements()">
-        改善を反映する
-      </button>
+      <button class="btn-submit" id="submit-btn" onclick="applyImprovements()">改善を反映する</button>
       <div class="error-box" id="error-box"></div>
     </div>
 
@@ -338,83 +363,139 @@
     <div class="success-box" id="success-box">
       <div class="success-icon">✅</div>
       <h3>反映が完了しました！</h3>
-      <p class="note">
-        GitHub Pagesの更新に<strong>約1分</strong>かかります。<br>
-        しばらく待ってからフォームを確認してください。
-      </p>
+      <p class="note">参加者ページを更新すると改善後のフォームが表示されます。</p>
       <div class="success-links">
-        <a class="link-btn primary" href="https://nekos-neko.github.io/bad-form-training-01/" target="_blank">
-          改善後のフォームを確認 →
-        </a>
-        <a class="link-btn secondary" href="https://nekos-neko.github.io/bad-form-training-01/compare.html" target="_blank">
-          ビフォー・アフター比較 →
-        </a>
+        <a class="link-btn primary"   id="success-view-link"    href="#" target="_blank">改善後のフォームを確認 →</a>
+        <a class="link-btn secondary" id="success-compare-link" href="#" target="_blank">ビフォー・アフター比較 →</a>
       </div>
       <button class="btn-next" onclick="nextRound()">次の改善を行う</button>
     </div>
 
+    <!-- 改善履歴 -->
     <div class="history-section">
       <h3>改善履歴</h3>
-      <div id="history-list">
-        <p class="history-empty">まだ改善履歴はありません</p>
+      <div id="history-list"><p class="history-empty">まだ改善履歴はありません</p></div>
+    </div>
+
+    <!-- セッション管理 -->
+    <div class="mgmt-section">
+      <div class="mgmt-header">
+        <h3>セッション管理</h3>
+        <button class="btn-new-session" onclick="startNewSession()">＋ 新しい研修を開始</button>
       </div>
+      <div id="sessions-list"><p class="sessions-empty">読み込み中...</p></div>
     </div>
   </div>
 
   <script>
-    // ===== 設定（デプロイ後にここを変更） =====
-    const WORKER_URL = 'https://bad-form-training-worker.kanekooo-jr.workers.dev';
-    // ==========================================
+    const WORKER_URL  = 'https://bad-form-training-worker.kanekooo-jr.workers.dev';
+    const PAGES_BASE  = 'https://nekos-neko.github.io/bad-form-training-01';
+    const SESSION_KEY = 'bad-form-session-id';
 
-    const STORAGE_KEY = 'bad-form-training-history';
+    let currentSessionId = null;
 
-    function getHistory() {
+    // ===== 初期化 =====
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initSession();
+      await loadSessions();
+    });
+
+    async function initSession() {
+      const storedId = localStorage.getItem(SESSION_KEY);
+      if (storedId) {
+        try {
+          const res = await fetch(`${WORKER_URL}/session/${storedId}/info`);
+          if (res.ok) {
+            const info = await res.json();
+            currentSessionId = storedId;
+            renderSessionBar(info);
+            renderUrls(storedId);
+            renderHistory(info.history);
+            updateRoundLabel(info.history.length + 1);
+            return;
+          }
+        } catch(e) {}
+      }
+      // セッションなし or 無効 → 新規作成
+      await createSession();
+    }
+
+    async function createSession() {
+      renderSessionBarLoading();
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      } catch {
-        return [];
+        const res  = await fetch(`${WORKER_URL}/session/new`, { method: 'POST' });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        currentSessionId = data.sessionId;
+        localStorage.setItem(SESSION_KEY, currentSessionId);
+
+        renderSessionBar({ id: currentSessionId, created: data.created, improveCount: 0 });
+        renderUrls(currentSessionId);
+        renderHistory([]);
+        updateRoundLabel(1);
+      } catch(e) {
+        document.getElementById('session-bar').innerHTML =
+          `<span style="color:#c62828;font-size:13px;">セッション作成失敗: ${e.message}</span>`;
       }
     }
 
-    function saveHistory(improvements) {
-      const history = getHistory();
-      history.push({
-        round: history.length + 1,
-        improvements,
-        timestamp: new Date().toLocaleString('ja-JP')
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    // ===== セッション情報表示 =====
+    function renderSessionBar(info) {
+      const bar = document.getElementById('session-bar');
+      bar.innerHTML = `
+        <span class="session-id">SESSION: ${info.id}</span>
+        <span class="session-meta">開始: ${info.created || '—'}</span>
+        <span class="session-meta">改善: ${info.improveCount || 0}回</span>
+      `;
     }
 
-    function renderHistory() {
-      const history = getHistory();
-      const round = history.length + 1;
-      document.getElementById('round-label').querySelector('span').textContent = `第${round}回目の改善`;
+    function renderSessionBarLoading() {
+      document.getElementById('session-bar').innerHTML =
+        '<span class="session-loading">セッションを準備中...</span>';
+    }
 
+    function renderUrls(sessionId) {
+      const viewUrl    = `${PAGES_BASE}/view.html?s=${sessionId}`;
+      const compareUrl = `${PAGES_BASE}/compare.html?s=${sessionId}`;
+      document.getElementById('view-url').textContent    = viewUrl;
+      document.getElementById('compare-url').textContent = compareUrl;
+      document.getElementById('success-view-link').href    = viewUrl;
+      document.getElementById('success-compare-link').href = compareUrl;
+      document.getElementById('url-box').style.display = 'block';
+    }
+
+    function updateRoundLabel(round) {
+      document.getElementById('round-label').querySelector('span').textContent = `第${round}回目の改善`;
+    }
+
+    function renderHistory(history) {
       const list = document.getElementById('history-list');
-      if (history.length === 0) {
+      if (!history || history.length === 0) {
         list.innerHTML = '<p class="history-empty">まだ改善履歴はありません</p>';
         return;
       }
-
       list.innerHTML = [...history].reverse().map(h => `
         <div class="history-item">
           <div class="round-num">第${h.round}回 ・ ${h.timestamp}</div>
-          <div>${h.improvements.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>
+          <div>${h.improvements.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
         </div>
       `).join('');
     }
 
-    function showSetupWarning() {
-      if (WORKER_URL === 'YOUR_WORKER_URL_HERE') {
-        document.getElementById('setup-warning').style.display = 'block';
-      }
+    async function copyUrl(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      await navigator.clipboard.writeText(text);
+      const btn = document.querySelector(`button[onclick="copyUrl('${elementId}')"]`);
+      const orig = btn.textContent;
+      btn.textContent = 'コピー済';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
     }
 
+    // ===== 改善適用 =====
     async function applyImprovements() {
       const improvements = document.getElementById('improvements').value.trim();
-      const errorBox = document.getElementById('error-box');
-
+      const errorBox     = document.getElementById('error-box');
       errorBox.style.display = 'none';
 
       if (!improvements) {
@@ -422,36 +503,39 @@
         errorBox.style.display = 'block';
         return;
       }
-
-      if (WORKER_URL === 'YOUR_WORKER_URL_HERE') {
-        errorBox.innerHTML = 'WORKER_URLが設定されていません。<br>このファイルの <code style="background:#fde;padding:1px 4px;border-radius:3px">WORKER_URL</code> をCloudflare WorkerのURLに変更してください。';
+      if (!currentSessionId) {
+        errorBox.textContent = 'セッションが準備できていません。ページを再読み込みしてください。';
         errorBox.style.display = 'block';
         return;
       }
 
       document.getElementById('form-area').style.display = 'none';
-      document.getElementById('loading').style.display = 'block';
+      document.getElementById('loading').style.display   = 'block';
 
       try {
-        const res = await fetch(WORKER_URL, {
-          method: 'POST',
+        const res  = await fetch(`${WORKER_URL}/session/${currentSessionId}/improve`, {
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ improvements })
+          body:    JSON.stringify({ improvements }),
         });
-
         const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || `サーバーエラー (${res.status})`);
 
-        if (!res.ok || data.error) {
-          throw new Error(data.error || `サーバーエラー (${res.status})`);
+        // 履歴を再取得して表示
+        const infoRes = await fetch(`${WORKER_URL}/session/${currentSessionId}/info`);
+        if (infoRes.ok) {
+          const info = await infoRes.json();
+          renderHistory(info.history);
+          renderSessionBar(info);
+          updateRoundLabel(info.history.length + 1);
+          await loadSessions();
         }
 
-        saveHistory(improvements);
-        document.getElementById('loading').style.display = 'none';
+        document.getElementById('loading').style.display     = 'none';
         document.getElementById('success-box').style.display = 'block';
-        renderHistory();
 
-      } catch (err) {
-        document.getElementById('loading').style.display = 'none';
+      } catch(err) {
+        document.getElementById('loading').style.display   = 'none';
         document.getElementById('form-area').style.display = 'block';
         errorBox.textContent = `エラーが発生しました: ${err.message}`;
         errorBox.style.display = 'block';
@@ -459,13 +543,56 @@
     }
 
     function nextRound() {
-      document.getElementById('success-box').style.display = 'none';
+      document.getElementById('success-box').style.display  = 'none';
       document.getElementById('improvements').value = '';
-      document.getElementById('form-area').style.display = 'block';
+      document.getElementById('form-area').style.display    = 'block';
     }
 
-    showSetupWarning();
-    renderHistory();
+    // ===== セッション管理 =====
+    async function startNewSession() {
+      if (!confirm('新しい研修セッションを開始しますか？\n現在のセッションはそのまま保持されます。')) return;
+      await createSession();
+      await loadSessions();
+    }
+
+    async function loadSessions() {
+      const container = document.getElementById('sessions-list');
+      try {
+        const res  = await fetch(`${WORKER_URL}/sessions`);
+        const list = await res.json();
+        if (!list.length) {
+          container.innerHTML = '<p class="sessions-empty">セッションはありません</p>';
+          return;
+        }
+        container.innerHTML = list.map(s => `
+          <div class="session-item">
+            <span class="s-id">${s.id}</span>
+            ${s.id === currentSessionId ? '<span class="s-current">現在</span>' : ''}
+            <span class="s-meta">開始: ${s.created || '—'} ／ 改善: ${s.improveCount || 0}回${s.lastUpdated ? ' ／ 最終: ' + s.lastUpdated : ''}</span>
+            <button class="btn-delete" onclick="deleteSession('${s.id}')">削除</button>
+          </div>
+        `).join('');
+      } catch(e) {
+        container.innerHTML = '<p class="sessions-empty">読み込みエラー</p>';
+      }
+    }
+
+    async function deleteSession(sessionId) {
+      if (!confirm(`セッション「${sessionId}」を削除しますか？\nこの操作は取り消せません。`)) return;
+      try {
+        await fetch(`${WORKER_URL}/session/${sessionId}`, { method: 'DELETE' });
+        if (sessionId === currentSessionId) {
+          localStorage.removeItem(SESSION_KEY);
+          currentSessionId = null;
+          document.getElementById('url-box').style.display = 'none';
+          renderSessionBarLoading();
+          await createSession();
+        }
+        await loadSessions();
+      } catch(e) {
+        alert(`削除エラー: ${e.message}`);
+      }
+    }
   </script>
 </body>
 </html>
