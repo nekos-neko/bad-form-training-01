@@ -87,17 +87,17 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      background: white;
-      border: 1px solid #ddd;
+      background: #f0f5ff;
+      border: none;
       border-radius: 4px;
       padding: 5px 8px;
     }
     .url-row .url-type {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: bold;
       color: #333;
-      width: 32px;
       flex-shrink: 0;
+      white-space: nowrap;
     }
     .btn-copy {
       font-size: 12px;
@@ -329,7 +329,7 @@
 
     <!-- 参加者URL -->
     <div class="url-box" id="url-box" style="display:none">
-      <div class="url-label">参加者・比較ページURL</div>
+      <div class="url-label">このURLをブラウザの別タブに貼り付けて現在の申込みフォームや、改善前との比較をしましょう</div>
       <div class="url-row">
         <span class="url-type">表示</span>
         <span id="view-url"></span>
