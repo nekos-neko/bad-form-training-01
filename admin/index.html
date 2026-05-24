@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>フォーム改善ツール（講師用）</title>
+  <title>UIハンズオン</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -93,9 +93,10 @@
       padding: 5px 8px;
     }
     .url-row .url-type {
-      font-size: 11px;
-      color: #999;
-      width: 44px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      width: 32px;
       flex-shrink: 0;
     }
     .btn-copy {
@@ -317,8 +318,8 @@
 <body>
   <div class="card">
     <div class="page-header">
-      <h1>フォーム改善ツール</h1>
-      <p>講師用 ・ 改善点を入力するとフォームが自動で改善されます</p>
+      <h1>UIハンズオン（BADパターン改善）</h1>
+      <p>自然言語で改善点を入力するとフォームが更新されます</p>
     </div>
 
     <!-- セッション情報バー -->
@@ -349,7 +350,7 @@
 ・エラーメッセージが分かりにくい（コード番号だけで内容が不明）
 ・送信ボタンと戻るボタンのラベルが逆になっている
 ・必須項目の表示方法が統一されていない"></textarea>
-      <p class="hint">社員から挙がった改善点を箇条書きで入力してください。複数でも構いません。</p>
+      <p class="hint">ディスカッションなどで挙がった改善点を箇条書きで入力してください。複数でも構いません。</p>
       <button class="btn-submit" id="submit-btn" onclick="applyImprovements()">改善を反映する</button>
       <div class="error-box" id="error-box"></div>
     </div>
@@ -363,7 +364,7 @@
     <div class="success-box" id="success-box">
       <div class="success-icon">✅</div>
       <h3>反映が完了しました！</h3>
-      <p class="note">参加者ページを更新すると改善後のフォームが表示されます。</p>
+      <p class="note">更新結果を確認してみよう！</p>
       <div class="success-links">
         <a class="link-btn primary"   id="success-view-link"    href="#" target="_blank">改善後のフォームを確認 →</a>
         <a class="link-btn secondary" id="success-compare-link" href="#" target="_blank">ビフォー・アフター比較 →</a>
