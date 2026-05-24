@@ -205,21 +205,19 @@
       iframes.forEach(iframe => {
         if (!iframe) return;
         try {
-          const doc = iframe.contentDocument || iframe.contentWindow?.document;
-          if (!doc) return;
-          const buttons = Array.from(doc.querySelectorAll('button'));
-          if (direction > 0) {
-            // 「進む」「次へ」「次のページ」などを探してクリック
-            const btn = buttons.find(b =>
-              /進む|次へ|次のページ|forward/i.test(b.textContent) && !b.disabled
-            );
-            if (btn) btn.click();
+          const win = iframe.contentWindow;
+          if (!win) return;
+          // goPage() を直接呼び出してバリデーションをスキップ
+          if (typeof win.goPage === 'function') {
+            win.goPage(nextPage);
           } else {
-            // 「戻る」「前へ」「前のページ」などを探してクリック
-            const btn = buttons.find(b =>
-              /戻る|前へ|前のページ|back/i.test(b.textContent) && !b.disabled
-            );
-            if (btn) btn.click();
+            // フォールバック: ページ要素を直接表示/非表示
+            const doc = win.document;
+            doc.querySelectorAll('[id^="page"]').forEach(el => {
+              el.style.display = 'none';
+            });
+            const target = doc.getElementById(`page${nextPage}`);
+            if (target) target.style.display = 'block';
           }
         } catch(e) { /* クロスオリジンの場合は無視 */ }
       });
