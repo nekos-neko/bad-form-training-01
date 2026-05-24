@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>イベント参加申込フォーム</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #f0f0f0;
+      color: #333;
+      font-size: 14px;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+      color: #222;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-container {
+      background: white;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 32px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    /* ===== 矢羽ステップインジケーター ===== */
+    .step-indicator {
+      display: flex;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      flex: 1;
+      position: relative;
+      padding: 10px 8px 10px 20px;
+      text-align: center;
+      background: #e0e0e0;
+      color: #999;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+    }
+
+    .step:first-child {
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+      padding-left: 12px;
+    }
+
+    .step:last-child {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%);
+    }
+
+    .step.active {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .step.done {
+      background: #5cb85c;
+      color: white;
+    }
+
+    .step-num {
+      display: block;
+      font-size: 10px;
+      margin-bottom: 2px;
+    }
+
+    .step-label {
+      display: block;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* セクションタイトル */
+    .section-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #333;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 20px;
+    }
+
+    /* フィールド */
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .req::after {
+      content: " ＊";
+      color: #d33;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      background: white;
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+    }
+
+    /* セレクト（▼アイコンあり） */
+    select {
+      appearance: auto;
+      cursor: pointer;
+    }
+
+    /* ヒントテキスト */
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+
+    /* エラーメッセージ */
+    .error-msg {
+      display: none;
+      font-size: 12px;
+      color: #d33;
+      margin-top: 4px;
+    }
+    .error-msg.visible { display: block; }
+
+    /* チェックボックス行 */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .check-row input[type="checkbox"] {
+      width: auto;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .check-row label {
+      font-weight: normal;
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    /* ラジオボタン行 */
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 4px;
+    }
+    .radio-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .radio-row input[type="radio"] { width: auto; }
+    .radio-row label { font-weight: normal; margin-bottom: 0; cursor: pointer; }
+
+    /* パスワード欄 */
+    .password-wrap {
+      position: relative;
+    }
+    .password-wrap input {
+      padding-right: 44px;
+    }
+    .toggle-pw {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #888;
+      padding: 0;
+      line-height: 1;
+    }
+
+    /* パスワード条件リスト */
+    .pw-conditions {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: #f8f8f8;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+    .pw-cond {
+      font-size: 12px;
+      color: #bbb;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .pw-cond:last-child { margin-bottom: 0; }
+    .pw-cond::before { content: "✗"; width: 14px; flex-shrink: 0; }
+    .pw-cond.ok { color: #2e7d32; }
+    .pw-cond.ok::before { content: "✓"; }
+
+    /* ファイルアップロード */
+    .upload-area {
+      position: relative;
+      width: 160px;
+      height: 120px;
+      border: 2px dashed #aaa;
+      border-radius: 4px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      text-align: center;
+      padding: 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-area:hover {
+      border-color: #1a73e8;
+      background: #f0f5ff;
+    }
+    .upload-area input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .upload-icon { font-size: 28px; color: #aaa; margin-bottom: 6px; }
+    .upload-text { font-size: 11px; color: #888; line-height: 1.5; pointer-events: none; }
+    .upload-area img {
+      display: none;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* カレンダーアイコンボタン */
+    .cal-btn {
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .cal-btn:hover { opacity: 1; }
+
+    /* 日付ラベル */
+    .date-label {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 3px;
+    }
+
+    /* 郵便番号 */
+    .zip-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .zip-row input { width: 140px; }
+    .zip-status { font-size: 12px; color: #888; }
+
+    /* ボタンエリア：前に戻る左・進む右・青色 */
+    .button-area {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-back {
+      background: white;
+      color: #555;
+      border: 1px solid #bbb;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-back:hover { background: #f5f5f5; }
+
+    .btn-next {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .btn-next:hover { background: #1558b0; }
+    .btn-next:disabled { background: #93b9f5; cursor: not-allowed; }
+
+    /* 確認画面テーブル */
+    .confirm-section-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin: 16px 0 8px;
+    }
+    .confirm-section-title:first-child { margin-top: 0; }
+
+    .confirm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .confirm-table th {
+      width: 38%;
+      padding: 8px 10px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-weight: 500;
+      color: #555;
+      vertical-align: top;
+    }
+    .confirm-table td {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      color: #333;
+      vertical-align: top;
+      word-break: break-all;
+    }
+
+    /* 完了画面 */
+    .complete-box {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .complete-icon { font-size: 56px; margin-bottom: 16px; line-height: 1; }
+    .complete-box h2 { font-size: 20px; color: #1a1a1a; margin-bottom: 12px; }
+    .complete-box p { font-size: 14px; color: #666; line-height: 1.8; }
+
+    /* ページ表示制御 */
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body>
+
+<h1>イベント参加申込フォーム</h1>
+
+<div class="form-container">
+
+  <!-- 矢羽ステップインジケーター -->
+  <div class="step-indicator" id="step-indicator">
+    <div class="step active" id="step1">
+      <span class="step-num">STEP 1</span>
+      <span class="step-label">申込者情報</span>
+    </div>
+    <div class="step" id="step2">
+      <span class="step-num">STEP 2</span>
+      <span class="step-label">申込内容</span>
+    </div>
+    <div class="step" id="step3">
+      <span class="step-num">STEP 3</span>
+      <span class="step-label">その他情報</span>
+    </div>
+    <div class="step" id="step4">
+      <span class="step-num">STEP 4</span>
+      <span class="step-label">確認</span>
+    </div>
+  </div>
+
+  <!-- ===== 1ページ目：お申込者情報 ===== -->
+  <div class="page active" id="page1">
+    <div class="section-title">お申込者情報</div>
+
+    <!-- 氏名：姓→名の順・First/Last表現なし -->
+    <div class="field">
+      <label class="req">氏名</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="lname" placeholder="姓" style="flex:1">
+        <input type="text" id="fname" placeholder="名" style="flex:1">
+      </div>
+      <span class="error-msg" id="e-name">氏名を入力してください</span>
+    </div>
+
+    <!-- 生年月日：年は1930〜・▼あり -->
+    <div class="field">
+      <label class="req">生年月日</label>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <select id="birth-year" style="width:100px;"></select>
+        <span style="font-size:13px;color:#555;">年</span>
+        <select id="birth-month" style="width:70px;"></select>
+        <span style="font-size:13px;color:#555;">月</span>
+        <select id="birth-day" style="width:70px;"></select>
+        <span style="font-size:13px;color:#555;">日</span>
+      </div>
+      <span class="error-msg" id="e-birth">生年月日を選択してください</span>
+    </div>
+
+    <!-- 性別：直接的な文言 -->
+    <div class="field">
+      <label class="req">性別</label>
+      <select id="gender" style="width:220px;">
+        <option value="">選択してください</option>
+        <option value="male">男性</option>
+        <option value="female">女性</option>
+        <option value="other">その他</option>
+        <option value="no">回答しない</option>
+      </select>
+      <span class="error-msg" id="e-gender">性別を選択してください</span>
+    </div>
+
+    <!-- 電話番号：1フィールド -->
+    <div class="field">
+      <label class="req">電話番号</label>
+      <input type="tel" id="tel" placeholder="例：090-1234-5678" style="max-width:220px;">
+      <span class="error-msg" id="e-tel">電話番号を入力してください</span>
+    </div>
+
+    <!-- 連絡可能な時間帯：チェックボックス・複数選択可・「他」で自由入力 -->
+    <div class="field">
+      <label class="req">連絡可能な時間帯（複数選択可）</label>
+      <div style="margin-top:4px;">
+        <div class="check-row">
+          <input type="checkbox" id="ct-morning" name="contact-time" value="morning">
+          <label for="ct-morning">9:00〜12:00</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="ct-afternoon" name="contact-time" value="afternoon">
+          <label for="ct-afternoon">13:00〜17:00</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="ct-evening" name="contact-time" value="evening">
+          <label for="ct-evening">19:00〜21:00</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="ct-other" name="contact-time" value="other" onchange="toggleContactOther()">
+          <label for="ct-other">他</label>
+        </div>
+        <div id="contact-other-wrap" style="display:none;margin-top:6px;margin-left:20px;">
+          <input type="text" id="contact-other-text" placeholder="例：平日18:00以降" style="max-width:240px;">
+        </div>
+      </div>
+      <span class="error-msg" id="e-contact-time">連絡可能な時間帯を選択してください</span>
+    </div>
+
+    <!-- メールアドレス：1フィールド・バリデーションあり -->
+    <div class="field">
+      <label class="req">メールアドレス</label>
+      <input type="email" id="email" placeholder="例：taro@example.com">
+      <span class="error-msg" id="e-email">正しいメールアドレスを入力してください</span>
+    </div>
+
+    <!-- 郵便番号：zipcloud自動補完 -->
+    <div class="field">
+      <label>郵便番号</label>
+      <div class="zip-row">
+        <input type="text" id="zip" placeholder="例：1234567" maxlength="8"
+               oninput="this.value=this.value.replace(/[^\d]/g,'')" onblur="fetchAddress()">
+        <span class="zip-status" id="zip-status"></span>
+      </div>
+      <p class="hint">7桁の数字を入力すると住所を自動補完します</p>
+    </div>
+
+    <!-- 住所 -->
+    <div class="field">
+      <label>住所</label>
+      <input type="text" id="address" placeholder="都道府県・市区町村・番地">
+    </div>
+
+    <!-- 住所ふりがな：1行input・文字数制限なし -->
+    <div class="field">
+      <label>住所ふりがな</label>
+      <input type="text" id="address-kana" placeholder="ふりがなをご記入ください" maxlength="300" oninput="updateKanaCount()">
+      <p class="hint" id="kana-count">残り 300 文字</p>
+    </div>
+
+    <div class="button-area">
+      <button class="btn-next" onclick="goPage1to2()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 2ページ目：申込内容 ===== -->
+  <div class="page" id="page2">
+    <div class="section-title">申込内容</div>
+
+    <!-- 参加期間：FROM→TOの順・YYYYMMDD直接入力 or カレンダーアイコンから選択 -->
+    <div class="field">
+      <label class="req">参加期間</label>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div class="date-label">開始日（FROM）</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="text" id="date-from" maxlength="8" placeholder="YYYYMMDD" style="max-width:140px;" oninput="this.value=this.value.replace(/[^\d]/g,'')">
+            <button type="button" class="cal-btn" onclick="openPicker('date-from-picker')" title="カレンダーから選択">📅</button>
+            <input type="date" id="date-from-picker" style="position:absolute;opacity:0;width:0;height:0;" onchange="syncPicker('date-from-picker','date-from')">
+          </div>
+        </div>
+        <div>
+          <div class="date-label">終了日（TO）</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="text" id="date-to" maxlength="8" placeholder="YYYYMMDD" style="max-width:140px;" oninput="this.value=this.value.replace(/[^\d]/g,'')">
+            <button type="button" class="cal-btn" onclick="openPicker('date-to-picker')" title="カレンダーから選択">📅</button>
+            <input type="date" id="date-to-picker" style="position:absolute;opacity:0;width:0;height:0;" onchange="syncPicker('date-to-picker','date-to')">
+          </div>
+        </div>
+      </div>
+      <p class="hint">直接入力：YYYYMMDD形式（例：20250601）／📅アイコンからカレンダーで選択も可</p>
+      <span class="error-msg" id="e-date">参加期間を正しく入力してください（8桁の数字）</span>
+    </div>
+
+    <!-- 参加区分：▼あり・一般/学生/招待/団体のみ -->
+    <div class="field">
+      <label class="req">参加区分</label>
+      <select id="category" style="max-width:220px;">
+        <option value="">選択してください</option>
+        <option value="1">一般参加</option>
+        <option value="2">学生参加</option>
+        <option value="3">招待参加</option>
+        <option value="4">団体参加</option>
+      </select>
+      <span class="error-msg" id="e-category">参加区分を選択してください</span>
+    </div>
+
+    <!-- 参加方法：参加区分から分離した新項目 -->
+    <div class="field">
+      <label class="req">参加方法</label>
+      <div class="radio-group">
+        <div class="radio-row">
+          <input type="radio" name="method" id="method-online" value="online">
+          <label for="method-online">オンライン参加</label>
+        </div>
+        <div class="radio-row">
+          <input type="radio" name="method" id="method-onsite" value="onsite">
+          <label for="method-onsite">現地参加</label>
+        </div>
+      </div>
+      <span class="error-msg" id="e-method">参加方法を選択してください</span>
+    </div>
+
+    <!-- 顔写真：クリック誘導テキスト・点線枠 -->
+    <div class="field">
+      <label>顔写真（任意）</label>
+      <div class="upload-area" id="upload-area">
+        <input type="file" id="file-input" accept="image/*" onchange="handleFile(this)" title="">
+        <div class="upload-icon" id="upload-icon">🖼</div>
+        <div class="upload-text" id="upload-text">ここをクリックして<br>ファイルを選択</div>
+        <img id="thumb-img" alt="プレビュー">
+      </div>
+    </div>
+
+    <div class="button-area">
+      <button class="btn-back" onclick="goPage(1)">← 前に戻る</button>
+      <button class="btn-next" onclick="goPage2to3()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 3ページ目：その他情報 ===== -->
+  <div class="page" id="page3">
+    <div class="section-title">その他情報</div>
+
+    <div class="field">
+      <label>緊急連絡先氏名</label>
+      <input type="text" id="emergency-name" placeholder="緊急時の連絡先氏名">
+    </div>
+
+    <div class="field">
+      <label>緊急連絡先電話番号</label>
+      <input type="tel" id="etel" placeholder="例：090-1234-5678" style="max-width:220px;">
+    </div>
+
+    <div class="field">
+      <label>アレルギー・配慮事項</label>
+      <input type="text" id="allergy" placeholder="特になければ、記入不要です">
+    </div>
+
+    <!-- パスワード：type=password・表示/非表示切替・条件リアルタイム表示 -->
+    <div class="field">
+      <label class="req">パスワード</label>
+      <p class="hint" style="margin-bottom:6px;">申込みキャンセル時の認証に用います。入力した値は控えておいてください。</p>
+      <div class="password-wrap">
+        <input type="password" id="password" placeholder="パスワードを入力" oninput="checkPwConditions()">
+        <button type="button" class="toggle-pw" onclick="togglePw()" title="表示/非表示を切替">👁</button>
+      </div>
+      <div class="pw-conditions">
+        <div class="pw-cond" id="cond-len">10文字以上</div>
+        <div class="pw-cond" id="cond-upper">大文字（A〜Z）を含む</div>
+        <div class="pw-cond" id="cond-lower">小文字（a〜z）を含む</div>
+        <div class="pw-cond" id="cond-num">数字（0〜9）を含む</div>
+        <div class="pw-cond" id="cond-sym">記号（! @ # $ など）を含む</div>
+      </div>
+      <span class="error-msg" id="e-password">すべての条件を満たすパスワードを入力してください</span>
+    </div>
+
+    <!-- 備考：仕様をヒントテキストとして常時表示 -->
+    <div class="field">
+      <label>備考・特記事項</label>
+      <textarea id="remarks" rows="4" placeholder="特記事項があればご記入ください"></textarea>
+      <p class="hint">200文字以内 ／ 使用可能文字：日本語・英数字・記号（一部不可） ／ 改行は最大3回まで</p>
+    </div>
+
+    <!-- プライバシーポリシー：デフォルトOFF -->
+    <div class="field">
+      <div class="check-row">
+        <input type="checkbox" id="privacy">
+        <label for="privacy" style="cursor:pointer;">個人情報の取扱い（プライバシーポリシー）に同意します</label>
+      </div>
+      <span class="error-msg" id="e-privacy">プライバシーポリシーへの同意が必要です</span>
+    </div>
+
+    <!-- ダイレクトメール：デフォルトOFF -->
+    <div class="field">
+      <div class="check-row">
+        <input type="checkbox" id="dm">
+        <label for="dm" style="cursor:pointer;">イベント案内や商品案内などのダイレクトメールの送付を希望する</label>
+      </div>
+    </div>
+
+    <div class="button-area">
+      <button class="btn-back" onclick="goPage(2)">← 前に戻る</button>
+      <button class="btn-next" onclick="goPage3to4()">確認画面へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 4ページ目：確認画面 ===== -->
+  <div class="page" id="page4">
+    <div class="section-title">入力内容の確認</div>
+    <p style="font-size:13px;color:#555;margin-bottom:16px;">以下の内容でよろしければ「申し込む」ボタンを押してください。</p>
+
+    <div id="confirm-content"></div>
+
+    <div class="button-area">
+      <button class="btn-back" onclick="goPage(3)">← 前に戻る</button>
+      <button class="btn-next" id="submit-btn" onclick="submitForm()">申し込む</button>
+    </div>
+  </div>
+
+  <!-- ===== 完了画面 ===== -->
+  <div class="page" id="page5">
+    <div class="complete-box">
+      <div class="complete-icon">✅</div>
+      <h2>お申し込みが完了しました</h2>
+      <p>
+        ご登録いただいたメールアドレス宛に<br>
+        確認メールをお送りします。<br><br>
+        しばらくしても届かない場合は<br>
+        お問い合わせください。
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== 生年月日プルダウン生成（年：1930〜） =====
+  (function() {
+    var yearSel = document.getElementById('birth-year');
+    var monthSel = document.getElementById('birth-month');
+    var daySel = document.getElementById('birth-day');
+    yearSel.innerHTML = '<option value="">年</option>';
+    for (var y = 2027; y >= 1950; y--) {
+      yearSel.innerHTML += '<option value="' + y + '">' + y + '</option>';
+    }
+    monthSel.innerHTML = '<option value="">月</option>';
+    for (var m = 1; m <= 12; m++) {
+      monthSel.innerHTML += '<option value="' + m + '">' + m + '</option>';
+    }
+    daySel.innerHTML = '<option value="">日</option>';
+    for (var d = 1; d <= 31; d++) {
+      daySel.innerHTML += '<option value="' + d + '">' + d + '</option>';
+    }
+  })();
+
+  // ===== ページ切替（入力値保持） =====
+  function goPage(n) {
+    document.querySelectorAll('.page').forEach(function(p, i) {
+      p.classList.toggle('active', i === n - 1);
+    });
+    updateSteps(n);
+    window.scrollTo(0, 0);
+  }
+
+  // ===== ステップインジケーター更新 =====
+  function updateSteps(current) {
+    for (var i = 1; i <= 4; i++) {
+      var el = document.getElementById('step' + i);
+      el.classList.remove('active', 'done');
+      if (i < current) el.classList.add('done');
+      else if (i === current) el.classList.add('active');
+    }
+  }
+
+  // ===== エラー表示ヘルパー =====
+  function setError(id, show) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('visible', show);
+  }
+
+  // ===== 連絡可能な時間帯「他」自由入力欄トグル =====
+  function toggleContactOther() {
+    var checked = document.getElementById('ct-other').checked;
+    document.getElementById('contact-other-wrap').style.display = checked ? 'block' : 'none';
+  }
+
+  // ===== カレンダーアイコン押下→ピッカーを開く =====
+  function openPicker(pickerId) {
+    var picker = document.getElementById(pickerId);
+    try {
+      picker.showPicker();
+    } catch(e) {
+      picker.click();
+    }
+  }
+
+  // ===== カレンダーで選択→テキスト欄にYYYYMMDD形式で反映 =====
+  function syncPicker(pickerId, textId) {
+    var val = document.getElementById(pickerId).value; // YYYY-MM-DD
+    if (val) {
+      document.getElementById(textId).value = val.replace(/-/g, '');
+    }
+  }
+
+  // ===== 住所ふりがな文字数カウンター =====
+  function updateKanaCount() {
+    var len = document.getElementById('address-kana').value.length;
+    var remaining = 300 - len;
+    var el = document.getElementById('kana-count');
+    el.textContent = '残り ' + remaining + ' 文字';
+    el.style.color = remaining <= 20 ? '#d33' : '#888';
+  }
+
+  // ===== 郵便番号→住所自動補完（zipcloud） =====
+  async function fetchAddress() {
+    var zip = document.getElementById('zip').value.replace(/-/g, '');
+    var status = document.getElementById('zip-status');
+    if (zip.length !== 7) return;
+    status.textContent = '検索中...';
+    status.style.color = '#888';
+    try {
+      var res = await fetch('https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zip);
+      var data = await res.json();
+      if (data.results) {
+        var r = data.results[0];
+        document.getElementById('address').value = r.address1 + r.address2 + r.address3;
+        status.textContent = '✓ 住所を補完しました';
+        status.style.color = '#2e7d32';
+      } else {
+        status.textContent = '該当する住所が見つかりません';
+        status.style.color = '#d33';
+      }
+    } catch(e) {
+      status.textContent = '';
+    }
+  }
+
+  // ===== パスワード表示/非表示切替 =====
+  function togglePw() {
+    var input = document.getElementById('password');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  // ===== パスワード条件リアルタイムチェック =====
+  function checkPwConditions() {
+    var pw = document.getElementById('password').value;
+    setCond('cond-len',   pw.length >= 10);
+    setCond('cond-upper', /[A-Z]/.test(pw));
+    setCond('cond-lower', /[a-z]/.test(pw));
+    setCond('cond-num',   /[0-9]/.test(pw));
+    setCond('cond-sym',   /[^A-Za-z0-9]/.test(pw));
+  }
+
+  function setCond(id, ok) {
+    document.getElementById(id).classList.toggle('ok', ok);
+  }
+
+  function validatePassword(pw) {
+    return pw.length >= 10
+      && /[A-Z]/.test(pw)
+      && /[a-z]/.test(pw)
+      && /[0-9]/.test(pw)
+      && /[^A-Za-z0-9]/.test(pw);
+  }
+
+  // ===== 顔写真プレビュー =====
+  function handleFile(input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('thumb-img').src = e.target.result;
+        document.getElementById('thumb-img').style.display = 'block';
+        document.getElementById('upload-icon').style.display = 'none';
+        document.getElementById('upload-text').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // ===== 1→2 バリデーション =====
+  function goPage1to2() {
+    var lname = document.getElementById('lname').value.trim();
+    var fname = document.getElementById('fname').value.trim();
+    var birthYear = document.getElementById('birth-year').value;
+    var birthMonth = document.getElementById('birth-month').value;
+    var birthDay = document.getElementById('birth-day').value;
+    var gender = document.getElementById('gender').value;
+    var tel = document.getElementById('tel').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var contactChecked = document.querySelectorAll('input[name="contact-time"]:checked').length > 0;
+    var hasError = false;
+
+    setError('e-name', !lname || !fname);
+    if (!lname || !fname) hasError = true;
+
+    var birthOk = birthYear && birthMonth && birthDay;
+    setError('e-birth', !birthOk);
+    if (!birthOk) hasError = true;
+
+    setError('e-gender', !gender);
+    if (!gender) hasError = true;
+
+    setError('e-tel', !tel);
+    if (!tel) hasError = true;
+
+    setError('e-contact-time', !contactChecked);
+    if (!contactChecked) hasError = true;
+
+    var emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setError('e-email', !emailValid);
+    if (!emailValid) hasError = true;
+
+    if (!hasError) goPage(2);
+  }
+
+  // ===== 2→3 バリデーション =====
+  function goPage2to3() {
+    var dateFrom = document.getElementById('date-from').value;
+    var dateTo = document.getElementById('date-to').value;
+    var dateFormatOk = /^\d{8}$/.test(dateFrom) && /^\d{8}$/.test(dateTo);
+    var dateOrderOk = dateFormatOk && dateTo >= dateFrom;
+    var dateOk = dateFormatOk && dateOrderOk;
+    var category = document.getElementById('category').value;
+    var method = document.querySelector('input[name="method"]:checked');
+    var hasError = false;
+
+    var dateErrMsg = !dateFormatOk
+      ? '参加期間を正しく入力してください（8桁の数字）'
+      : !dateOrderOk
+        ? '終了日は開始日以降の日付を入力してください'
+        : '';
+    document.getElementById('e-date').textContent = dateErrMsg;
+    setError('e-date', !dateOk);
+    if (!dateOk) hasError = true;
+
+    setError('e-category', !category);
+    if (!category) hasError = true;
+
+    setError('e-method', !method);
+    if (!method) hasError = true;
+
+    if (!hasError) goPage(3);
+  }
+
+  // ===== 3→4 バリデーション（確認画面へ） =====
+  function goPage3to4() {
+    var pw = document.getElementById('password').value;
+    var privacy = document.getElementById('privacy').checked;
+    var hasError = false;
+
+    setError('e-password', !validatePassword(pw));
+    if (!validatePassword(pw)) hasError = true;
+
+    setError('e-privacy', !privacy);
+    if (!privacy) hasError = true;
+
+    if (!hasError) {
+      buildConfirm();
+      goPage(4);
+    }
+  }
+
+  // ===== 確認画面の内容生成 =====
+  function buildConfirm() {
+    var lname = document.getElementById('lname').value;
+    var fname = document.getElementById('fname').value;
+    var by = document.getElementById('birth-year').value;
+    var bm = document.getElementById('birth-month').value;
+    var bd = document.getElementById('birth-day').value;
+    var genderEl = document.getElementById('gender');
+    var gender = genderEl.options[genderEl.selectedIndex].text;
+    var tel = document.getElementById('tel').value;
+    var email = document.getElementById('email').value;
+    var zip = document.getElementById('zip').value;
+    var address = document.getElementById('address').value;
+    var addressKana = document.getElementById('address-kana').value;
+
+    var contactTimes = [];
+    var labels = { morning: '9:00〜12:00', afternoon: '13:00〜17:00', evening: '19:00〜21:00' };
+    document.querySelectorAll('input[name="contact-time"]:checked').forEach(function(el) {
+      if (el.value === 'other') {
+        var other = document.getElementById('contact-other-text').value;
+        contactTimes.push('他' + (other ? '（' + other + '）' : ''));
+      } else {
+        contactTimes.push(labels[el.value]);
+      }
+    });
+
+    var df = document.getElementById('date-from').value;
+    var dt = document.getElementById('date-to').value;
+    var dateFrom = df.length === 8 ? df.slice(0,4) + '/' + df.slice(4,6) + '/' + df.slice(6,8) : df;
+    var dateTo   = dt.length === 8 ? dt.slice(0,4) + '/' + dt.slice(4,6) + '/' + dt.slice(6,8) : dt;
+    var catEl = document.getElementById('category');
+    var category = catEl.options[catEl.selectedIndex].text;
+    var method = document.querySelector('input[name="method"]:checked');
+    var methodText = method ? (method.value === 'online' ? 'オンライン参加' : '現地参加') : '';
+
+    var emergencyName = document.getElementById('emergency-name').value || '－';
+    var etel = document.getElementById('etel').value || '－';
+    var allergy = document.getElementById('allergy').value || '特になし';
+    var remarks = document.getElementById('remarks').value || '特になし';
+    var dm = document.getElementById('dm').checked ? '希望する' : '希望しない';
+
+    function row(label, value) {
+      return '<tr><th>' + label + '</th><td>' + (value || '未入力') + '</td></tr>';
+    }
+
+    document.getElementById('confirm-content').innerHTML =
+      '<p class="confirm-section-title">■ お申込者情報</p>' +
+      '<table class="confirm-table">' +
+        row('氏名', lname + ' ' + fname) +
+        row('生年月日', by + '年' + bm + '月' + bd + '日') +
+        row('性別', gender) +
+        row('電話番号', tel) +
+        row('連絡可能な時間帯', contactTimes.join('、')) +
+        row('メールアドレス', email) +
+        row('郵便番号', zip || '未入力') +
+        row('住所', address || '未入力') +
+        row('住所ふりがな', addressKana || '未入力') +
+      '</table>' +
+      '<p class="confirm-section-title">■ 申込内容</p>' +
+      '<table class="confirm-table">' +
+        row('参加期間', dateFrom + ' 〜 ' + dateTo) +
+        row('参加区分', category) +
+        row('参加方法', methodText) +
+      '</table>' +
+      '<p class="confirm-section-title">■ その他情報</p>' +
+      '<table class="confirm-table">' +
+        row('緊急連絡先氏名', emergencyName) +
+        row('緊急連絡先電話番号', etel) +
+        row('アレルギー・配慮事項', allergy) +
+        row('備考・特記事項', remarks) +
+        row('ダイレクトメール', dm) +
+      '</table>';
+  }
+
+  // ===== 申込確定（ボタン無効化・完了画面へ） =====
+  function submitForm() {
+    var btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '送信中...';
+    setTimeout(function() {
+      document.getElementById('step-indicator').style.display = 'none';
+      goPage(5);
+    }, 800);
+  }
+</script>
+</body>
+</html>
