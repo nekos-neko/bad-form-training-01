@@ -410,6 +410,16 @@
       <span class="error-msg" id="e-name">氏名を入力してください</span>
     </div>
 
+    <!-- 氏名ふりがな -->
+    <div class="field">
+      <label class="req">氏名ふりがな</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="lname-kana" placeholder="せい" style="flex:1">
+        <input type="text" id="fname-kana" placeholder="めい" style="flex:1">
+      </div>
+      <span class="error-msg" id="e-name-kana">氏名ふりがなを入力してください</span>
+    </div>
+
     <!-- 生年月日：年は1930〜・▼あり -->
     <div class="field">
       <label class="req">生年月日</label>
@@ -493,13 +503,6 @@
     <div class="field">
       <label>住所</label>
       <input type="text" id="address" placeholder="都道府県・市区町村・番地">
-    </div>
-
-    <!-- 住所ふりがな：1行input・文字数制限なし -->
-    <div class="field">
-      <label>住所ふりがな</label>
-      <input type="text" id="address-kana" placeholder="ふりがなをご記入ください" maxlength="300" oninput="updateKanaCount()">
-      <p class="hint" id="kana-count">残り 300 文字</p>
     </div>
 
     <div class="button-area">
@@ -747,15 +750,6 @@
     }
   }
 
-  // ===== 住所ふりがな文字数カウンター =====
-  function updateKanaCount() {
-    var len = document.getElementById('address-kana').value.length;
-    var remaining = 300 - len;
-    var el = document.getElementById('kana-count');
-    el.textContent = '残り ' + remaining + ' 文字';
-    el.style.color = remaining <= 20 ? '#d33' : '#888';
-  }
-
   // ===== 郵便番号→住所自動補完（zipcloud） =====
   async function fetchAddress() {
     var zip = document.getElementById('zip').value.replace(/-/g, '');
@@ -840,6 +834,11 @@
     setError('e-name', !lname || !fname);
     if (!lname || !fname) hasError = true;
 
+    var lnameKana = document.getElementById('lname-kana').value.trim();
+    var fnameKana = document.getElementById('fname-kana').value.trim();
+    setError('e-name-kana', !lnameKana || !fnameKana);
+    if (!lnameKana || !fnameKana) hasError = true;
+
     var birthOk = birthYear && birthMonth && birthDay;
     setError('e-birth', !birthOk);
     if (!birthOk) hasError = true;
@@ -911,6 +910,8 @@
   function buildConfirm() {
     var lname = document.getElementById('lname').value;
     var fname = document.getElementById('fname').value;
+    var lnameKana = document.getElementById('lname-kana').value;
+    var fnameKana = document.getElementById('fname-kana').value;
     var by = document.getElementById('birth-year').value;
     var bm = document.getElementById('birth-month').value;
     var bd = document.getElementById('birth-day').value;
@@ -920,7 +921,6 @@
     var email = document.getElementById('email').value;
     var zip = document.getElementById('zip').value;
     var address = document.getElementById('address').value;
-    var addressKana = document.getElementById('address-kana').value;
 
     var contactTimes = [];
     var labels = { morning: '9:00〜12:00', afternoon: '13:00〜17:00', evening: '19:00〜21:00' };
@@ -956,6 +956,7 @@
       '<p class="confirm-section-title">■ お申込者情報</p>' +
       '<table class="confirm-table">' +
         row('氏名', lname + ' ' + fname) +
+        row('氏名ふりがな', lnameKana + ' ' + fnameKana) +
         row('生年月日', by + '年' + bm + '月' + bd + '日') +
         row('性別', gender) +
         row('電話番号', tel) +
@@ -963,7 +964,6 @@
         row('メールアドレス', email) +
         row('郵便番号', zip || '未入力') +
         row('住所', address || '未入力') +
-        row('住所ふりがな', addressKana || '未入力') +
       '</table>' +
       '<p class="confirm-section-title">■ 申込内容</p>' +
       '<table class="confirm-table">' +
